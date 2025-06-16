@@ -26,7 +26,6 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
         >
           Filter
         </button>
-        {/* Example: Cloud Providers */}
         {availableTags && (
           <div className="absolute mt-2 bg-white border rounded shadow p-2 z-10 w-64">
             <div className="font-bold text-xs mb-2">Cloud Provider</div>

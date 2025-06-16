@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import SearchFilterBar from '../components/SearchFilterBar';
 import RecommendationList from '../components/RecommendationList';
+import { useDebounce } from '../hooks/useDebounce';
 import type { AvailableTags } from '../types';
 
 const DashboardPage: React.FC = () => {
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 400);
   const [filters, setFilters] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<AvailableTags | undefined>(undefined);
 
@@ -25,7 +27,7 @@ const DashboardPage: React.FC = () => {
           }
         />
         <RecommendationList
-          search={search}
+          search={debouncedSearch}
           filters={filters}
           onAvailableTags={setAvailableTags}
         />
