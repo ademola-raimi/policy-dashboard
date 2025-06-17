@@ -22,7 +22,6 @@ const CloudProviderIcon: React.FC<Props> = ({ provider, className = 'h-5 w-5' })
       src={icons[provider]}
       alt={`${provider} icon`}
       className={className}
-      width={20}
     />
   );
 };

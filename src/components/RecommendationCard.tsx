@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Recommendation } from '../types';
-import { CubeIcon } from '@heroicons/react/24/outline';
 import CloudProviderIcon from './CloudProviderIcon';
 import { useRecommendationsContext } from '../hooks/useRecommendationsContext';
+import boxicon from '../assets/sensor-box.svg';
 
 interface Props {
   recommendation: Recommendation;
@@ -13,73 +13,66 @@ const RecommendationCard: React.FC<Props> = ({ recommendation, onClick }) => {
   const { availableTags } = useRecommendationsContext();
 
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="flex bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 items-start gap-6 hover:bg-gray-50 cursor-pointer"
+      className="flex bg-white rounded-xl border border-gray-200 items-stretch gap-0 hover:bg-gray-50 cursor-pointer overflow-hidden"
     >
-      {/* Left Icon */}
-      <div className="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center text-white">
-        <CubeIcon className="h-6 w-6" />
+      <div className="flex flex-col items-center justify-center bg-cyan-600 w-28 min-w-28 h-auto rounded-l-xl self-stretch">
+        <img className="w-12 h-12" src={boxicon} alt="box" />
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 min-w-0">
-        {/* Title Row */}
+      {/* Main content */}
+      <div className="flex-1 min-w-0 p-6">
         <div className="flex items-start justify-between gap-4 mb-1">
-          <h3 className="font-medium text-gray-900 truncate">{recommendation.title}</h3>
-          <div className="flex items-center gap-2 shrink-0">
+          <h3 className="font-semibold text-base text-gray-900 truncate">{recommendation.title}</h3>
+          <div className="flex items-center gap-1 shrink-0">
             {recommendation.provider.map((providerIndex) => {
               const providerName = availableTags?.providers?.[providerIndex];
               if (providerName === 'UNSPECIFIED') return null;
               return (
-                <CloudProviderIcon 
+                <CloudProviderIcon
                   key={providerName}
-                  provider={providerName as 'AWS' | 'AZURE' | 'GCP'} 
+                  provider={providerName as 'AWS' | 'AZURE' | 'GCP'}
+                  className="h-4 w-4"
                 />
               );
             })}
           </div>
         </div>
-
-        {/* Description */}
-        <p className="text-sm text-gray-500 mb-3 line-clamp-2">{recommendation.description}</p>
-
-        {/* Badges Row */}
-        <div className="flex flex-wrap gap-2">
-          {/* Framework Badges */}
+        <p className="text-xs text-gray-500 mb-2 line-clamp-2">{recommendation.description}</p>
+        <div className="flex flex-wrap gap-1 mb-2">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
+            Based on Repeating Alerts
+          </span>
           {recommendation.frameworks.map(framework => (
-            <span 
+            <span
               key={framework.name}
-              className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700"
+              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700"
             >
               {framework.name}
             </span>
           ))}
-          
-          {/* Based on Repeating Alerts Badge */}
-          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
-            Based on Repeating Alerts
-          </span>
         </div>
       </div>
 
       {/* Right Side */}
-      <div className="flex flex-col items-end gap-2">
-        {/* Impact Assessment */}
-        <div className="text-right">
+      <div className="flex flex-col items-end gap-2 min-w-[160px] p-6">
+        <div>
           <div className="text-xs font-medium text-gray-900">Impact assessment</div>
-          <div className="text-xs text-gray-500">-{recommendation.impactAssessment.totalViolations} Violations / month</div>
+          <div className="text-xs text-gray-500">
+            ~{recommendation.impactAssessment.totalViolations} Violations / month
+          </div>
         </div>
-
-        {/* Value Score */}
-        <div className="text-right">
+        <div>
           <div className="text-xs font-medium text-gray-900">Value score</div>
-          <div className="flex gap-0.5">
-            {Array.from({ length: Math.min(recommendation.score, 5) }).map((_, i) => (
-              <div key={i} className="w-4 h-1 bg-cyan-500 rounded-full" />
-            ))}
-            {Array.from({ length: Math.max(5 - recommendation.score, 0) }).map((_, i) => (
-              <div key={i} className="w-4 h-1 bg-gray-200 rounded-full" />
+          <div className="flex gap-0.5 mt-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className={`w-4 h-1 rounded-full ${
+                  i < recommendation.score ? 'bg-cyan-500' : 'bg-gray-200'
+                }`}
+              />
             ))}
           </div>
         </div>

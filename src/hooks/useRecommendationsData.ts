@@ -16,7 +16,8 @@ export function useRecommendationsData({ isArchive, search, filters }: UseRecomm
       if (typeof pageParam === 'string') params.set('cursor', pageParam);
       if (search) params.set('search', search);
       if (filters.length) params.set('tags', filters.join(','));
-      
+      params.set('limit', '10');
+
       const endpoint = isArchive ? '/recommendations/archive' : '/recommendations';
       
       const res = await axios.get(`${endpoint}?${params}`, { 
@@ -25,7 +26,13 @@ export function useRecommendationsData({ isArchive, search, filters }: UseRecomm
       });
       return res.data;
     },
-    getNextPageParam: (lastPage) => lastPage.pagination.cursor.next,
+    getNextPageParam: (lastPage) => {
+      console.log('lastPage: ', lastPage)
+      const next = lastPage?.pagination?.cursor?.next;
+      console.log('getNextPageParam:', next);
+      // Return undefined if next is null, undefined, or empty string
+      return next || undefined;
+    },
     staleTime: 60_000,
     refetchOnWindowFocus: false,
     initialPageParam: null,

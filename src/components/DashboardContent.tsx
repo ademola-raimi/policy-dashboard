@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from './Layout';
 import SearchFilterBar from './SearchFilterBar';
 import RecommendationList from './RecommendationList';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { ArchiveBoxIcon, StarIcon } from '@heroicons/react/24/outline';
 import { useRecommendationsContext } from '../hooks/useRecommendationsContext';
 
 const DashboardContent: React.FC = () => {
@@ -27,7 +27,6 @@ const DashboardContent: React.FC = () => {
 
   console.log(availableTags)
 
-  // Add loading state check
   if (query.isLoading) {
     return (
       <Layout>
@@ -38,7 +37,6 @@ const DashboardContent: React.FC = () => {
     );
   }
 
-  // Add error state check
   if (query.isError) {
     return (
       <Layout>
@@ -51,18 +49,18 @@ const DashboardContent: React.FC = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col flex-1">
-        <div className="border-b border-gray-200 bg-white dark:bg-gray-800">
+      <div className="flex flex-col flex-1 bg-gray-50">
+        <div className="bg-white border-b border-gray-200">
           <div className="px-8 py-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-semibold text-gray-900">
-                {isArchive ? 'Archive' : 'Recommendations'}
-                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                  {!query.isLoading && `Showing ${recommendations.length} of ${totalItems} results`}
-                </span>
-              </h1>
-              <button className="ml-3 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                <PlusIcon className="h-5 w-5 mr-2" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl font-semibold text-gray-900">
+                  {isArchive ? 'Archive' : 'Recommendations'}
+                </h1>
+                <StarIcon className="h-6 w-6 text-blue-500" />
+              </div>
+              <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                <ArchiveBoxIcon className="h-4 w-4 mr-2" />
                 {isArchive ? 'Back to Recommendations' : 'Archive'}
               </button>
             </div>
@@ -73,6 +71,11 @@ const DashboardContent: React.FC = () => {
               onFiltersChange={setFilters}
               availableTags={availableTags}
             />
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Showing {recommendations.length} of {totalItems} results
+              </div>
+            </div>
           </div>
         </div>
 

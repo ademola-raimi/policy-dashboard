@@ -16,7 +16,7 @@ const RecommendationList: React.FC = () => {
   } = useRecommendationsContext();
 
   const recommendations = data?.pages.flatMap(page => page.data) ?? [];
-  
+
   const observer = useRef<IntersectionObserver | null>(null);
   const lastRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -26,7 +26,7 @@ const RecommendationList: React.FC = () => {
         if (entries[0].isIntersecting && hasNextPage) {
           fetchNextPage();
         }
-      });
+      }, { rootMargin: '200px' }); // Trigger earlier
       if (node) observer.current.observe(node);
     },
     [isLoading, isFetchingNextPage, hasNextPage, fetchNextPage]
@@ -34,9 +34,10 @@ const RecommendationList: React.FC = () => {
 
   if (isLoading) return <div className="py-8 text-center">Loading...</div>;
   if (isError) return <div className="py-8 text-center text-red-500">{(error as Error).message}</div>;
+  if (recommendations.length === 0) return <div className="py-8 text-center text-gray-400">No recommendations found.</div>;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 overflow-auto max-h-[70vh]">
       {recommendations.map((recommendation, idx) => {
         const isLast = idx === recommendations.length - 1;
         return (

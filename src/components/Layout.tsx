@@ -24,8 +24,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const email = username ? `${username}@aryon.security` : '';
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-      <aside className="w-64 bg-white dark:bg-gray-800 border-r flex flex-col justify-between">
+    <div className="flex min-h-screen bg-gray-50">
+      <aside className="w-64 bg-white border-r flex flex-col justify-between">
         <div>
           <div className="p-6 flex items-center gap-2">
             <img src="/logo.svg" alt="ARYON" className="h-8 w-8" />
@@ -40,12 +40,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   `flex items-center gap-3 px-6 py-2 rounded-lg mb-1 transition-colors ${
                     isActive
                       ? 'bg-blue-50 text-blue-600 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }`
                 }
                 end
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-4 w-4" />
                 {name}
               </NavLink>
             ))}
