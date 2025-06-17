@@ -1,26 +1,22 @@
-import React, { useRef, useCallback, useEffect } from 'react';
-import { useRecommendations } from '../hooks/useRecommendations';
+import React, { useRef, useCallback } from 'react';
 import RecommendationCard from './RecommendationCard';
-import type { PaginatedResponse, Recommendation, AvailableTags } from '../types';
-import type { InfiniteData } from '@tanstack/react-query';
+import { useRecommendationsContext } from '../hooks/useRecommendationsContext';
 
-interface Props {
-  search: string;
-  filters: string[];
-  onAvailableTags?: (tags: AvailableTags) => void;
-}
+const RecommendationList: React.FC = () => {
+  const { 
+    query: { 
+      data,
+      isLoading,
+      isError,
+      error,
+      fetchNextPage,
+      hasNextPage,
+      isFetchingNextPage 
+    }
+  } = useRecommendationsContext();
 
-const RecommendationList: React.FC<Props> = ({ search, filters, onAvailableTags }) => {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-    error,
-  } = useRecommendations(search, filters);
-
+  const recommendations = data?.pages.flatMap(page => page.data) ?? [];
+  
   const observer = useRef<IntersectionObserver | null>(null);
   const lastRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -36,27 +32,19 @@ const RecommendationList: React.FC<Props> = ({ search, filters, onAvailableTags 
     [isLoading, isFetchingNextPage, hasNextPage, fetchNextPage]
   );
 
-  // Extract availableTags from the first page
-  const availableTags = data?.pages?.[0]?.availableTags;
-
-  // Notify parent (Dashboard) about availableTags
-  useEffect(() => {
-    if (availableTags && onAvailableTags) onAvailableTags(availableTags);
-  }, [availableTags, onAvailableTags]);
-
   if (isLoading) return <div className="py-8 text-center">Loading...</div>;
   if (isError) return <div className="py-8 text-center text-red-500">{(error as Error).message}</div>;
 
-  const recommendations =
-    (data as InfiniteData<PaginatedResponse<Recommendation>> | undefined)?.pages.flatMap((page) => page.data) ?? [];
-
   return (
     <div className="flex flex-col gap-4">
-      {recommendations.map((rec, idx) => {
+      {recommendations.map((recommendation, idx) => {
         const isLast = idx === recommendations.length - 1;
         return (
-          <div ref={isLast ? lastRef : undefined} key={rec.recommendationId}>
-            <RecommendationCard recommendation={rec} />
+          <div ref={isLast ? lastRef : undefined} key={recommendation.recommendationId}>
+            <RecommendationCard 
+              recommendation={recommendation}
+              onClick={() => {/* handle click */}}
+            />
           </div>
         );
       })}

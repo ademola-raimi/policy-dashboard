@@ -31,6 +31,12 @@ export interface Recommendation {
   totalHistoricalViolations: number;
   reasons: string[];
   class: number;
+  impactAssessment: ImpactAssessment;
+}
+
+export interface ImpactAssessment {
+    totalViolations: number;
+    mostImpactedScope: {name: string; type: string; t: number};
 }
 
 export interface FrameWork {
@@ -69,6 +75,31 @@ export interface AvailableTags {
   classes: string[];
 }
 
-export interface RecommendationsApiResponse<T> extends PaginatedResponse<T> {
+export interface RecommendationsApiResponse {
+  data: Recommendation[];
+  pagination: {
+    cursor: { 
+      next: string | null 
+    };
+    totalItems: number;
+  };
   availableTags: AvailableTags;
 }
+
+
+export interface RecommendationsState {
+  recommendations: Recommendation[];
+  totalItems: number;
+  availableTags?: AvailableTags;
+  isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+}
+
+export type RecommendationsAction =
+  | { type: 'SET_DATA'; payload: { recommendations: Recommendation[]; totalItems: number; availableTags?: AvailableTags } }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: Error }
+  | { type: 'SET_NEXT_PAGE_STATUS'; payload: { hasNextPage: boolean; isFetchingNextPage: boolean } };
