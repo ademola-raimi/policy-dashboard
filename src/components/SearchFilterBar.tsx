@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { SearchFilterBarProps } from '../types';
-import { FunnelIcon } from '@heroicons/react/24/outline';
+import { FaFilter } from 'react-icons/fa';
 
 const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
   search,
@@ -10,6 +10,14 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
   availableTags,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
+
+  const handleCheckboxChange = (provider: string) => {
+    onFiltersChange(
+      filters.includes(provider)
+        ? filters.filter(f => f !== provider)
+        : [...filters, provider]
+    );
+  };
 
   return (
     <div className="flex items-center gap-4 mb-6 relative max-w-xl w-full">
@@ -37,7 +45,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
           type="button"
           onClick={() => setShowFilters(!showFilters)}
         >
-          <FunnelIcon className="w-4 h-4" />
+          <FaFilter className="w-4 h-4" />
           Filter
         </button>
         {showFilters && availableTags && (
@@ -47,43 +55,32 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
                 <div className="font-medium text-xs text-gray-500 mb-2">
                   Cloud Provider
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {availableTags.providers.map(provider => (
-                    <button
-                      key={provider}
-                      className={`px-3 py-1 text-xs rounded-full border transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        filters.includes(provider)
-                          ? 'bg-blue-50 text-blue-700 border-blue-200'
-                          : 'bg-gray-50 text-gray-700 border-gray-200'
-                      }`}
-                      onClick={() =>
-                        onFiltersChange(
-                          filters.includes(provider)
-                            ? filters.filter(f => f !== provider)
-                            : [...filters, provider]
-                        )
-                      }
-                      type="button"
-                    >
-                      {provider}
-                    </button>
+                <div className="flex flex-col gap-2">
+                  {availableTags.providers.map((provider) => (
+                    <label key={provider} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded border border-gray-200 cursor-pointer transition-colors">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={filters.includes(provider)}
+                          onChange={() => handleCheckboxChange(provider)}
+                          className="form-checkbox h-4 w-4 text-cyan-600 border-gray-400 focus:ring-cyan-500 bg-white"
+                        />
+                        <span className="text-sm text-gray-800">{provider}</span>
+                      </div>
+                      {availableTags.counts && availableTags.counts[provider] !== undefined && (
+                        <span className="text-xs text-gray-500 ml-2">{availableTags.counts[provider]}</span>
+                      )}
+                    </label>
                   ))}
                 </div>
               </div>
-              <div className="flex justify-between pt-3 border-t">
+              <div className="flex justify-center pt-3 border-t">
                 <button
                   onClick={() => onFiltersChange([])}
                   className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
                   type="button"
                 >
                   Clear filters
-                </button>
-                <button
-                  onClick={() => setShowFilters(false)}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  type="button"
-                >
-                  Apply
                 </button>
               </div>
             </div>

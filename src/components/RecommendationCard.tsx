@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Recommendation } from '../types';
-import CloudProviderIcon from './CloudProviderIcon';
-import { useRecommendationsContext } from '../hooks/useRecommendationsContext';
 import boxicon from '../assets/sensor-box.svg';
+import ValueScore from './ValueScore';
+import ProviderIcons from './ProviderIcons';
 
 interface Props {
   recommendation: Recommendation;
@@ -10,10 +10,10 @@ interface Props {
 }
 
 const RecommendationCard: React.FC<Props> = ({ recommendation, onClick }) => {
-  const { availableTags } = useRecommendationsContext();
 
   return (
     <div
+      data-cy="recommendation-card"
       onClick={onClick}
       className="flex bg-white rounded-xl border border-gray-200 items-stretch gap-0 hover:bg-gray-50 cursor-pointer overflow-hidden"
     >
@@ -25,19 +25,7 @@ const RecommendationCard: React.FC<Props> = ({ recommendation, onClick }) => {
       <div className="flex-1 min-w-0 p-6">
         <div className="flex items-start justify-between gap-4 mb-1">
           <h3 className="font-semibold text-base text-gray-900 truncate">{recommendation.title}</h3>
-          <div className="flex items-center gap-1 shrink-0">
-            {recommendation.provider.map((providerIndex) => {
-              const providerName = availableTags?.providers?.[providerIndex];
-              if (providerName === 'UNSPECIFIED') return null;
-              return (
-                <CloudProviderIcon
-                  key={providerName}
-                  provider={providerName as 'AWS' | 'AZURE' | 'GCP'}
-                  className="h-4 w-4"
-                />
-              );
-            })}
-          </div>
+          <ProviderIcons providerIndexes={recommendation.provider} />
         </div>
         <p className="text-xs text-gray-500 mb-2 line-clamp-2">{recommendation.description}</p>
         <div className="flex flex-wrap gap-1 mb-2">
@@ -65,16 +53,7 @@ const RecommendationCard: React.FC<Props> = ({ recommendation, onClick }) => {
         </div>
         <div>
           <div className="text-xs font-medium text-gray-900">Value score</div>
-          <div className="flex gap-0.5 mt-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-4 h-1 rounded-full ${
-                  i < recommendation.score ? 'bg-cyan-500' : 'bg-gray-200'
-                }`}
-              />
-            ))}
-          </div>
+          <ValueScore score={recommendation.score} />
         </div>
       </div>
     </div>
