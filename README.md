@@ -1,54 +1,98 @@
-# React + TypeScript + Vite
+# Policy Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern dashboard built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**.  
+Supports dark/light mode, authentication, and robust UI/UX patterns.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
 
-## Expanding the ESLint configuration
+### Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Node.js** (v18 or newer recommended)
+- **npm** or **yarn**
+- (Optional) **Cypress** for end-to-end testing
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+---
+
+### Installation
+
+```bash
+npm install
+# or
+yarn install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Running the App
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm run dev
+# or
+yarn dev
 ```
+
+The app will typically be available at [http://localhost:5173](http://localhost:5173).
+
+---
+
+### Environment Variables
+
+If required, copy `.env.example` to `.env` and update any necessary variables (such as API endpoints).
+
+---
+
+## Running Tests
+
+### Unit/Integration Tests
+
+```bash
+npm test
+# or
+yarn test
+```
+
+### Cypress End-to-End Tests
+
+**Open Cypress UI:**
+```bash
+npx cypress open
+```
+
+**Run Cypress in headless mode:**
+```bash
+npx cypress run
+```
+
+---
+
+## Features
+
+- **Dark/Light Mode:** Toggle using the sidebar button. Theme is persisted in `localStorage`.
+- **Authentication:** Checks authentication on load via `/auth/me`.
+- **API:** Ensure your backend (e.g., at `localhost:3001`) is running for full functionality.
+- **Responsive Design:** Works on desktop and mobile.
+- **Skeleton Loaders:** For improved loading UX.
+
+---
+
+## Project Structure
+
+- `src/components/` – React components (UI, layout, etc.)
+- `src/hooks/` – Custom React hooks
+- `src/provider/` – Context providers (e.g., Auth, Theme)
+- `src/context/` – React context definitions
+- `src/assets/` – Static assets (images, logos)
+- `src/types/` – TypeScript types and interfaces
+
+---
+
+## Troubleshooting
+
+- If you see errors about missing dependencies, run `npm install` or `yarn install`.
+- If the UI does not update for dark mode, ensure you are using the latest Tailwind CSS and your custom variant is set in `index.css`.
+
+---
+
+For further questions, check the code comments or contact the project maintainer.
