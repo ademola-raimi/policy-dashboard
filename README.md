@@ -27,6 +27,15 @@ yarn install
 
 ### Running the App
 
+1. Mock Server Setup:
+
+```bash
+cd mock-server
+npm install
+npm run dev  # Starts server on http://localhost:3001
+```
+2. Frontend setup
+
 ```bash
 npm run dev
 # or
