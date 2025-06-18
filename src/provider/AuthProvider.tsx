@@ -2,6 +2,7 @@ import React, { useReducer, useEffect, useState, type ReactNode } from 'react';
 import axios from 'axios';
 import type { AuthAction, AuthState } from '../types';
 import AuthContext from '../context/AuthContext';
+import Spinner from '../components/Spinner';
 
 export const initialState: AuthState = {
   isAuthenticated: false,
@@ -42,7 +43,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <Spinner />;
   }
 
   return (

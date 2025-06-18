@@ -44,15 +44,17 @@ const RecommendationCard: React.FC<Props> = ({ recommendation, onClick }) => {
       </div>
 
       <div className="flex flex-col items-end gap-2 min-w-[160px] p-6">
-        <div>
-          <div className="text-xs font-medium text-gray-900">Impact assessment</div>
-          <div className="text-xs text-gray-500">
-            ~{recommendation.impactAssessment.totalViolations} Violations / month
+        <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-2">
+          <div>
+            <div className="text-xs font-medium text-gray-900 dark:text-gray-100">Impact assessment</div>
+            <div className="text-xs text-gray-500 dark:text-gray-300">
+              ~{recommendation.impactAssessment.totalViolations} Violations / month
+            </div>
           </div>
-        </div>
-        <div>
-          <div className="text-xs font-medium text-gray-900">Value score</div>
-          <ValueScore score={recommendation.score} />
+          <div>
+            <div className="text-xs font-medium text-gray-900 dark:text-gray-100">Value score</div>
+            <ValueScore score={recommendation.score} />
+          </div>
         </div>
       </div>
     </div>

@@ -10,7 +10,7 @@ import SidePanel from './SidePanel';
 import type { Recommendation } from '../types';
 import Btn from './Btn';
 import { BsArchive } from 'react-icons/bs';
-import DashboardSkeleton from './DashboardSkeleton';
+import SidePanelSkeleton from './SidePanelSkeleton';
 
 const LazySidePanelContent = lazy(() => import('./SidePanelContent'));
 
@@ -47,16 +47,6 @@ const DashboardContent: React.FC = () => {
     setSidePanelOpen(true);
   }, []);
 
-  if (query.isLoading) {
-    return (
-      <Layout>
-        <Suspense fallback={null}>
-          <DashboardSkeleton />
-        </Suspense>
-      </Layout>
-    );
-  }
-
   if (query.isError) {
     return (
       <Layout>
@@ -69,9 +59,9 @@ const DashboardContent: React.FC = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col flex-1 bg-gray-50 w-full relative">
+      <div className="flex flex-col flex-1 bg-gray-50 dark:bg-gray-900 w-full relative">
         <div className={sidePanelOpen ? 'transition-all duration-300 filter blur-sm pointer-events-none' : 'transition-all duration-300'}>
-          <div className="bg-white border-b border-gray-200 w-full">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 w-full">
             <div className="px-8 py-6 w-full">
               {isArchive && (
                 <Breadcrumb items={[
@@ -81,7 +71,7 @@ const DashboardContent: React.FC = () => {
               )}
               <div className="flex items-center justify-between mb-6 w-full">
                 <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-semibold text-gray-900">
+                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
                     {isArchive ? 'Recommendations Archive' : 'Recommendations'}
                   </h1>
                   {isArchive ? (
@@ -91,7 +81,7 @@ const DashboardContent: React.FC = () => {
                   )}
                 </div>
                 <Btn
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
                   onClick={() => {
                     if (isArchive) {
                       navigate('/recommendations');
@@ -114,7 +104,7 @@ const DashboardContent: React.FC = () => {
                     availableTags={availableTags}
                   />
                 </div>
-                <div className="text-sm text-gray-600 whitespace-nowrap">
+                <div className="text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
                   Showing {recommendations.length} of {totalItems} results
                 </div>
               </div>
@@ -130,11 +120,11 @@ const DashboardContent: React.FC = () => {
           <div className="fixed inset-0 z-50 flex">
             <div className="absolute inset-0 bg-black/10 transition-opacity" onClick={() => setSidePanelOpen(false)} />
             <SidePanel open={sidePanelOpen} onClose={() => setSidePanelOpen(false)}>
-              {selectedRecommendation && (
-                <Suspense fallback={null}>
+              <Suspense fallback={<SidePanelSkeleton />}>
+                {selectedRecommendation && (
                   <LazySidePanelContent recommendation={selectedRecommendation} />
-                </Suspense>
-              )}
+                )}
+              </Suspense>
             </SidePanel>
           </div>
         )}

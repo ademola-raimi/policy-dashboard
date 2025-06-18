@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { SearchFilterBarProps } from '../types';
-import { FaFilter } from 'react-icons/fa';
+import { CiSearch } from "react-icons/ci";
+import { FiFilter } from "react-icons/fi";
+
 
 const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
   search,
@@ -10,6 +12,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
   availableTags,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleCheckboxChange = (provider: string) => {
     onFiltersChange(
@@ -18,6 +21,17 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
         : [...filters, provider]
     );
   };
+
+  useEffect(() => {
+    if (!showFilters) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowFilters(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showFilters]);
 
   return (
     <div className="flex items-center gap-4 mb-6 relative max-w-xl w-full">
@@ -28,16 +42,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
           value={search}
           onChange={e => onSearchChange(e.target.value)}
         />
-        <svg
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          viewBox="0 0 24 24"
-        >
-          <circle cx={11} cy={11} r={8} />
-          <line x1={21} y1={21} x2={16.65} y2={16.65} />
-        </svg>
+        <CiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
       </div>
       <div className="relative">
         <button
@@ -45,11 +50,14 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
           type="button"
           onClick={() => setShowFilters(!showFilters)}
         >
-          <FaFilter className="w-4 h-4" />
+          <FiFilter className="w-4 h-4" />
           Filter
         </button>
         {showFilters && availableTags && (
-          <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+          <div
+            ref={dropdownRef}
+            className="absolute top-full left-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+          >
             <div className="p-4">
               <div className="mb-4">
                 <div className="font-medium text-xs text-gray-500 mb-2">
@@ -74,7 +82,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
                   ))}
                 </div>
               </div>
-              <div className="flex justify-center pt-3 border-t">
+              <div className="flex justify-center pt-1 border-t-2 border-gray-200">
                 <button
                   onClick={() => onFiltersChange([])}
                   className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
