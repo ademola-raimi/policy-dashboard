@@ -35,13 +35,6 @@ yarn dev
 
 The app will typically be available at [http://localhost:5173](http://localhost:5173).
 
----
-
-### Environment Variables
-
-If required, copy `.env.example` to `.env` and update any necessary variables (such as API endpoints).
-
----
 
 ## Running Tests
 
