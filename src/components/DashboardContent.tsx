@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import Layout from './Layout';
 import SearchFilterBar from './SearchFilterBar';
 import RecommendationList from './RecommendationList';
@@ -8,10 +8,18 @@ import Breadcrumb from './Breadcrumb';
 import { useNavigate } from 'react-router-dom';
 import SidePanel from './SidePanel';
 import type { Recommendation } from '../types';
-import SidePanelContent from './SidePanelContent';
 import Btn from './Btn';
 import { BsArchive } from 'react-icons/bs';
 import DashboardSkeleton from './DashboardSkeleton';
+
+const LazySidePanelContent = lazy(() => import('./SidePanelContent'));
+
+const DEFAULT_AVAILABLE_TAGS = {
+  frameworks: [],
+  reasons: [],
+  providers: [],
+  classes: []
+};
 
 const DashboardContent: React.FC = () => {
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
@@ -26,20 +34,25 @@ const DashboardContent: React.FC = () => {
   } = useRecommendationsContext();
   const navigate = useNavigate();
 
-  const recommendations = query.data?.pages.flatMap(page => page.data) ?? [];
-  const totalItems = query.data?.pages[0]?.pagination.totalItems ?? 0;
+  const recommendations = useMemo(() => 
+    query.data?.pages.flatMap(page => page.data) ?? [], 
+    [query.data]
+  );
 
-  const availableTags = query.data?.pages[0].availableTags ?? {
-    frameworks: [],
-    reasons: [],
-    providers: [],
-    classes: []
-  };
+  const totalItems = query.data?.pages[0]?.pagination.totalItems ?? 0;
+  const availableTags = query.data?.pages[0]?.availableTags ?? DEFAULT_AVAILABLE_TAGS;
+
+  const handleRecommendationClick = useCallback((rec: Recommendation) => {
+    setSelectedRecommendation(rec);
+    setSidePanelOpen(true);
+  }, []);
 
   if (query.isLoading) {
     return (
       <Layout>
-        <DashboardSkeleton />
+        <Suspense fallback={null}>
+          <DashboardSkeleton />
+        </Suspense>
       </Layout>
     );
   }
@@ -57,7 +70,6 @@ const DashboardContent: React.FC = () => {
   return (
     <Layout>
       <div className="flex flex-col flex-1 bg-gray-50 w-full relative">
-        {/* Main content with blur when SidePanel is open */}
         <div className={sidePanelOpen ? 'transition-all duration-300 filter blur-sm pointer-events-none' : 'transition-all duration-300'}>
           <div className="bg-white border-b border-gray-200 w-full">
             <div className="px-8 py-6 w-full">
@@ -110,21 +122,18 @@ const DashboardContent: React.FC = () => {
           </div>
           <div className="flex-1 px-8 py-6 w-full">
             <RecommendationList
-              onRecommendationClick={(rec: Recommendation) => {
-                setSelectedRecommendation(rec);
-                setSidePanelOpen(true);
-              }}
+              onRecommendationClick={handleRecommendationClick}
             />
           </div>
         </div>
-        {/* SidePanel modal, overlay only over main content */}
         {sidePanelOpen && (
           <div className="fixed inset-0 z-50 flex">
-            {/* Overlay over the whole page, lighter */}
             <div className="absolute inset-0 bg-black/10 transition-opacity" onClick={() => setSidePanelOpen(false)} />
             <SidePanel open={sidePanelOpen} onClose={() => setSidePanelOpen(false)}>
               {selectedRecommendation && (
-                <SidePanelContent recommendation={selectedRecommendation} />
+                <Suspense fallback={null}>
+                  <LazySidePanelContent recommendation={selectedRecommendation} />
+                </Suspense>
               )}
             </SidePanel>
           </div>

@@ -14,6 +14,7 @@ const RecommendationCard: React.FC<Props> = ({ recommendation, onClick }) => {
   return (
     <div
       data-cy="recommendation-card"
+      data-testid="recommendation-card"
       onClick={onClick}
       className="flex bg-white rounded-xl border border-gray-200 items-stretch gap-0 hover:bg-gray-50 cursor-pointer overflow-hidden"
     >
@@ -21,7 +22,6 @@ const RecommendationCard: React.FC<Props> = ({ recommendation, onClick }) => {
         <img className="w-12 h-12" src={boxicon} alt="box" />
       </div>
 
-      {/* Main content */}
       <div className="flex-1 min-w-0 p-6">
         <div className="flex items-start justify-between gap-4 mb-1">
           <h3 className="font-semibold text-base text-gray-900 truncate">{recommendation.title}</h3>
@@ -43,7 +43,6 @@ const RecommendationCard: React.FC<Props> = ({ recommendation, onClick }) => {
         </div>
       </div>
 
-      {/* Right Side */}
       <div className="flex flex-col items-end gap-2 min-w-[160px] p-6">
         <div>
           <div className="text-xs font-medium text-gray-900">Impact assessment</div>

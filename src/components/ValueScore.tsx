@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface ValueScoreProps {
-  score: number; // 0-100
+  score: number;
   className?: string;
 }
 
@@ -36,4 +36,4 @@ const ValueScore: React.FC<ValueScoreProps> = ({ score, className = '' }) => {
   );
 };
 
-export default ValueScore;
+export default React.memo(ValueScore);

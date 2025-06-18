@@ -1,7 +1,7 @@
 import React from 'react';
 
 const DashboardSkeleton: React.FC = () => (
-  <div className="flex justify-center items-center h-full w-full">
+  <div className="flex justify-center items-center h-full w-full" data-testid="skeleton-loader">
     <div className="w-full max-w-4xl">
       <div className="h-10 w-1/3 bg-gray-200 rounded mb-6 animate-pulse" />
       <div className="h-10 w-full bg-gray-100 rounded mb-8 animate-pulse" />

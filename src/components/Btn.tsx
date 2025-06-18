@@ -20,4 +20,4 @@ const Btn: React.FC<BtnProps> = ({ children, variant = 'primary', className = ''
   );
 };
 
-export default Btn;
+export default React.memo(Btn);
