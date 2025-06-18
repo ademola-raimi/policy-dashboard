@@ -20,6 +20,11 @@ export type AuthAction =
   | { type: 'LOGIN'; payload: { token: string; username: string } }
   | { type: 'LOGOUT' };
 
+export interface FurtherReadingItem {
+  name: string;
+  href: string;
+}
+
 export interface Recommendation {
   tenantId: string;
   recommendationId: string;
@@ -32,6 +37,8 @@ export interface Recommendation {
   reasons: string[];
   class: number;
   impactAssessment: ImpactAssessment;
+  affectedResources?: {name: string}[];
+  furtherReading?: FurtherReadingItem[];
 }
 
 export interface ImpactAssessment {
@@ -73,6 +80,7 @@ export interface AvailableTags {
   reasons: string[];
   providers: string[];
   classes: string[];
+  counts?: Record<string, number>;
 }
 
 export interface RecommendationsApiResponse {
