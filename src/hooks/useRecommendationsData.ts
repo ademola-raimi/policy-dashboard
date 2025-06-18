@@ -27,9 +27,7 @@ export function useRecommendationsData({ isArchive, search, filters }: UseRecomm
       return res.data;
     },
     getNextPageParam: (lastPage) => {
-      console.log('lastPage: ', lastPage)
       const next = lastPage?.pagination?.cursor?.next;
-      console.log('getNextPageParam:', next);
       // Return undefined if next is null, undefined, or empty string
       return next || undefined;
     },

@@ -7,6 +7,7 @@ import { CgReadme } from "react-icons/cg";
 import { BsArchive } from "react-icons/bs";
 import { PiCubeBold, PiWarningOctagonLight } from "react-icons/pi";
 import { VscGraph, VscWarning } from "react-icons/vsc";
+import { useQueryClient } from '@tanstack/react-query';
 
 import Btn from './Btn';
 import ImpactAssessmentCard from './ImpactAssessmentCard';
@@ -17,20 +18,42 @@ interface Props {
 }
 
 const SidePanelContent: React.FC<Props> = ({ recommendation }) => {
-  const { query } = useRecommendationsContext();
+  const { query, isArchive } = useRecommendationsContext();
+  const queryClient = useQueryClient();
 
   const handleArchive = async () => {
     try {
       await fetch(`http://localhost:3001/recommendations/${recommendation.recommendationId}/archive`, {
         method: 'POST',
       });
-      await query.refetch();
+      await Promise.all([
+        query.refetch(),
+        queryClient.refetchQueries({ queryKey: ['recommendations', { isArchive: true }], exact: false }),
+      ]);
       if (typeof window !== 'undefined') {
         const closeBtn = document.querySelector('[aria-label="Close"]');
         if (closeBtn) (closeBtn as HTMLElement).click();
       }
     } catch {
       alert('Failed to archive.');
+    }
+  };
+
+  const handleUnarchive = async () => {
+    try {
+      await fetch(`http://localhost:3001/recommendations/${recommendation.recommendationId}/unarchive`, {
+        method: 'POST',
+      });
+      await Promise.all([
+        query.refetch(),
+        queryClient.refetchQueries({ queryKey: ['recommendations', { isArchive: false }], exact: false }),
+      ]);
+      if (typeof window !== 'undefined') {
+        const closeBtn = document.querySelector('[aria-label="Close"]');
+        if (closeBtn) (closeBtn as HTMLElement).click();
+      }
+    } catch {
+      alert('Failed to unarchive.');
     }
   };
 
@@ -124,14 +147,25 @@ const SidePanelContent: React.FC<Props> = ({ recommendation }) => {
         </div>
       )}
       <div className="mt-auto flex gap-4 pt-6 border-t-2 border-gray-200">
-        <Btn
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-gray-800 bg-white hover:bg-gray-100 shadow-none border-0 font-medium"
-          onClick={handleArchive}
-          data-cy="archive-btn"
-        >
-          <BsArchive/>
-          Archive
-        </Btn>
+        {isArchive ? (
+          <Btn
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-gray-800 bg-white hover:bg-gray-100 shadow-none border-0 font-medium"
+            onClick={handleUnarchive}
+            data-cy="unarchive-btn"
+          >
+            <BsArchive />
+            Unarchive
+          </Btn>
+        ) : (
+          <Btn
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-gray-800 bg-white hover:bg-gray-100 shadow-none border-0 font-medium"
+            onClick={handleArchive}
+            data-cy="archive-btn"
+          >
+            <BsArchive />
+            Archive
+          </Btn>
+        )}
         <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-white bg-cyan-600 hover:bg-cyan-700 font-semibold">
           Configure Policy
         </button>
