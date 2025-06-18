@@ -48,21 +48,7 @@ If required, copy `.env.example` to `.env` and update any necessary variables (s
 ### Unit/Integration Tests
 
 ```bash
-npm test
-# or
-yarn test
-```
-
-### Cypress End-to-End Tests
-
-**Open Cypress UI:**
-```bash
-npx cypress open
-```
-
-**Run Cypress in headless mode:**
-```bash
-npx cypress run
+npx vitest run
 ```
 
 ---

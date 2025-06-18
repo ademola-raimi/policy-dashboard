@@ -107,10 +107,13 @@ describe('DashboardContent', () => {
         </QueryClientProvider>
       </MemoryRouter>
     );
-    await waitFor(() => screen.getAllByTestId('recommendation-card'));
+    // Wait for the recommendation cards to appear
+    await waitFor(() => expect(screen.getAllByTestId('recommendation-card').length).toBeGreaterThan(0));
     fireEvent.click(screen.getAllByTestId('recommendation-card')[0]);
-    expect(screen.getByTestId('side-panel')).toBeVisible();
-    fireEvent.click(screen.getByLabelText('Close'));
+    // Use findByTestId to wait for the side panel to appear
+    expect(await screen.findByTestId('side-panel')).toBeVisible();
+    fireEvent.click(screen.getByLabelText(/close/i));
+    // Wait for the side panel to be removed from the DOM
     await waitFor(() => expect(screen.queryByTestId('side-panel')).toBeNull());
   });
 });
