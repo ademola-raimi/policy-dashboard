@@ -52,16 +52,6 @@ server.use(cookieParser());
 const SECRET_KEY = 'your-secret-key';
 const DEFAULT_LIMIT = 100; // Increased to ensure we get all recommendations in tests
 
-// Utility to check if a string is a RecommendationClass
-const isRecommendationClass = (value: string): value is keyof typeof RecommendationClass => {
-  return Object.keys(RecommendationClass).includes(value);
-};
-
-// Utility to check if a string is a CloudProvider
-const isCloudProvider = (value: string): value is keyof typeof CloudProvider => {
-  return Object.keys(CloudProvider).includes(value);
-};
-
 // Utility to filter recommendations
 const filterRecommendations = (
   recommendations: Recommendation[],
@@ -84,27 +74,19 @@ const filterRecommendations = (
 
   // Apply tag filters
   if (tags && tags.length > 0) {
-    filtered = filtered.filter((rec) =>
-      tags.every((tag) => {
-        // Check frameworks
-        if (rec.frameworks.some((framework) => framework.name === tag)) {
-          return true;
-        }
-        // Check reasons
-        if (rec.reasons.includes(tag)) {
-          return true;
-        }
-        // Check provider
-        if (isCloudProvider(tag) && rec.provider.includes(CloudProvider[tag])) {
-          return true;
-        }
-        // Check class
-        if (isRecommendationClass(tag) && rec.class === RecommendationClass[tag]) {
-          return true;
-        }
-        return false;
-      })
-    );
+    filtered = filtered.filter((rec) => {
+      // Check if any provider name matches the tag
+      const providerNames = rec.provider.map(idx => Object.keys(CloudProvider).filter(key => isNaN(Number(key)))[idx]);
+      const hasProvider = tags.some(tag => providerNames.includes(tag));
+      // Check frameworks
+      const hasFramework = tags.some(tag => rec.frameworks.some(fw => fw.name === tag));
+      // Check reasons
+      const hasReason = tags.some(tag => rec.reasons.includes(tag));
+      // Check class
+      const classNames = Object.keys(RecommendationClass).filter(key => isNaN(Number(key)));
+      const hasClass = tags.some(tag => classNames[rec.class] === tag);
+      return hasProvider || hasFramework || hasReason || hasClass;
+    });
   }
 
   return filtered;
@@ -164,11 +146,22 @@ server.get('/recommendations', (req: Request, res: Response) => {
     console.log('Paginated results:', result.data.length);
 
     // Add available tags to the response
+    // Calculate counts for each provider tag only
+    const providerTags = Object.keys(CloudProvider).filter((key) => isNaN(Number(key)));
+    const counts: Record<string, number> = {};
+    providerTags.forEach(tag => {
+      counts[tag] = filtered.filter(rec => {
+        // Provider match
+        const providerNames = rec.provider.map(idx => providerTags[idx]);
+        return providerNames.includes(tag);
+      }).length;
+    });
     const availableTags = {
       frameworks: Array.from(new Set(db.recommendations.flatMap((r) => r.frameworks.map((f) => f.name)))),
       reasons: Array.from(new Set(db.recommendations.flatMap((r) => r.reasons))),
-      providers: Object.keys(CloudProvider).filter((key) => isNaN(Number(key))),
+      providers: providerTags,
       classes: Object.keys(RecommendationClass).filter((key) => isNaN(Number(key))),
+      counts,
     };
 
     res.json({
